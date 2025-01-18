@@ -23,86 +23,86 @@ Button.propTypes = {
     type: PropTypes.string,
 }
 const StyledWrapper = styled.div`
-  .cta {
-    display: flex;
-    padding: 11px 33px;
-    text-decoration: none;
-    font-size: 25px;
-    color: white;
-    background: #6225e6;
-    transition: 1s;
-    box-shadow: 6px 6px 0 black;
-    transform: skewX(-15deg);
-    border: none;
-    cursor: pointer;
-  }
-
-  .cta:focus {
-    outline: none;
-  }
-
-  .cta:hover {
-    transition: 0.5s;
-    box-shadow: 10px 10px 0 #fbc638;
-  }
-
-  .cta .second {
-    transition: 0.5s;
-    margin-right: 0;
-  }
-
-  .cta:hover .second {
-    transition: 0.5s;
-    margin-right: 45px;
-  }
-
-  .span {
-    transform: skewX(15deg);
-  }
-
-  .second {
-    width: 20px;
-    margin-left: 30px;
-    position: relative;
-    top: 12%;
-  }
-
-  .one {
-    transition: 0.4s;
-    transform: translateX(-60%);
-  }
-
-  .two {
-    transition: 0.5s;
-    transform: translateX(-30%);
-  }
-
-  .cta:hover .three {
-    animation: color_anim 1s infinite 0.2s;
-  }
-
-  .cta:hover .one {
-    transform: translateX(0%);
-    animation: color_anim 1s infinite 0.6s;
-  }
-
-  .cta:hover .two {
-    transform: translateX(0%);
-    animation: color_anim 1s infinite 0.4s;
-  }
-
-  @keyframes color_anim {
-    0% {
-      fill: white;
+    .cta {
+        display: flex;
+        padding: 11px 33px;
+        text-decoration: none;
+        font-size: 25px;
+        color: white;
+        background: #25d6e6;
+        transition: 1s;
+        box-shadow: 6px 6px 0 black;
+        transform: skewX(-15deg);
+        border: none;
+        cursor: pointer;
     }
 
-    50% {
-      fill: #fbc638;
+    .cta:focus {
+        outline: none;
     }
 
-    100% {
-      fill: white;
+    .cta:hover {
+        transition: 0.5s;
+        box-shadow: 10px 10px 0 rgba(17, 105, 199, 0.6);
     }
-  }`;
+
+    .cta .second {
+        transition: 0.5s;
+        margin-right: 0;
+    }
+
+    .cta:hover .second {
+        transition: 0.5s;
+        margin-right: 45px;
+    }
+
+    .span {
+        transform: skewX(15deg);
+    }
+
+    .second {
+        width: 20px;
+        margin-left: 30px;
+        position: relative;
+        top: 12%;
+    }
+
+    .one {
+        transition: 0.4s;
+        transform: translateX(-60%);
+    }
+
+    .two {
+        transition: 0.5s;
+        transform: translateX(-30%);
+    }
+
+    .cta:hover .three {
+        animation: color_anim 1s infinite 0.2s;
+    }
+
+    .cta:hover .one {
+        transform: translateX(0%);
+        animation: color_anim 1s infinite 0.6s;
+    }
+
+    .cta:hover .two {
+        transform: translateX(0%);
+        animation: color_anim 1s infinite 0.4s;
+    }
+
+    @keyframes color_anim {
+        0% {
+            fill: white;
+        }
+
+        50% {
+            fill: #1a34c0;
+        }
+
+        100% {
+            fill: white;
+        }
+    }`;
 
 export default Button;

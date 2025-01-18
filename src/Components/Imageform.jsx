@@ -2,13 +2,17 @@
 import {useEffect, useState} from "react";
 import InputFile from "./InputFile.jsx"
 import Button from "./Button.jsx"
-
+import ImageCard from "./ImageCard.jsx";
 function ImageForm(props){
     const [ImgData, setImgData] = useState(null);
     const [msg, setMsg] = useState("Click To Upload Image");
+    const [ButtonText , setButtonText] = useState("Upload");
+    const [ToRender, setToRender] = useState(<InputFile onValueChange={handleChange}/>);
     
     useEffect(() => {
-        setMsg(ImgData? ImgData.name :"Click To Upload Image");
+        setMsg(ImgData? ImgData.name :"");
+        setButtonText(ImgData? "Confirm" : "Upload");
+        setToRender(ImgData? <ImageCard URL={URL.createObjectURL(ImgData)}/> : <InputFile onValueChange={handleChange}/>)
     },[ImgData])
     
     function handleChange(e){
@@ -25,9 +29,9 @@ function ImageForm(props){
     return (
         <form onSubmit={handleSubmit}>
             <div style={Style.container}>
-                <InputFile onValueChange={handleChange}/>
+                {ToRender}
                 <p>{msg}</p>
-                <Button type={"submit"} text={"Confirm"} />
+                <Button type={"submit"} text={ButtonText} />
             </div>
         </form>
     )
