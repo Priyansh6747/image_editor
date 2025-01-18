@@ -9,3 +9,9 @@ extern "C" {
 pub fn greet(name: &str) {
     alert(&format!("Hello, {}!", name));
 }
+
+#[wasm_bindgen]
+pub fn do_square(n : i32) -> u32{
+    (n*n) as u32
+}
+
