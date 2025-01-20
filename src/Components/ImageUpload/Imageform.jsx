@@ -1,7 +1,7 @@
 ﻿import PropTypes from "prop-types";
 import {useEffect, useState} from "react";
 import InputFile from "./InputFile.jsx"
-import Button from "./Button.jsx"
+import Button from "../Button.jsx"
 import ImageCard from "./ImageCard.jsx";
 function ImageForm(props){
     const [ImgData, setImgData] = useState(null);
@@ -45,8 +45,8 @@ ImageForm.propTypes = {
 
 const Style = {
     container: {
-        width: '100vw',
-        height: '100vh',
+        width: '100%',
+        height: '100%',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
