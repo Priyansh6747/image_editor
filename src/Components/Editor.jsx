@@ -1,13 +1,23 @@
 ﻿import PropTypes from "prop-types";
 import {useEffect, useRef, useState} from "react";
+import RangeMenu from "./RangeMenu.jsx";
+import Toolbar from "./tools/Toolbar.jsx";
+
+window.addEventListener('beforeunload', function (e) {
+    const message = "Are you sure you want to leave? Any unsaved changes will be lost.";
+    e.returnValue = message;
+    return message;
+});
+
+
 
 function Editor(props) {
-    const [IMG, setIMG] = useState(props.IMG);
     const imageRef = useRef(new Image());
     const CanvasRef = useRef(null);
+    const [OrignalImgData, setOrignalImgData] = useState(null);
 
     useEffect(() => {
-        if(IMG) imageRef.current.src = URL.createObjectURL(new Blob([IMG]));
+        imageRef.current.src = URL.createObjectURL(new Blob([props.IMG]));
         imageRef.current.onload = () => {
             const canvas = CanvasRef.current;
             const context = canvas.getContext("2d");
@@ -15,12 +25,46 @@ function Editor(props) {
             let newWidth = canvas.height  * (imageRef.current.width/imageRef.current.height);
             canvas.width = newWidth > window.width*0.8 ? window.width*0.8 : imageRef.current.width;
             context.drawImage(imageRef.current , 0, 0, canvas.width, canvas.height);
+            if(!OrignalImgData) setOrignalImgData(context.getImageData(0, 0, canvas.width, canvas.height));
         }
-    },[IMG])
+    },[props.IMG])
+
+    const [Brightness, setBrightness] = useState(0);
+    function handleBrightnessChange(e) {
+        setBrightness(e.target.value);
+        let context = CanvasRef.current.getContext("2d");
+        let data = new Uint8ClampedArray(OrignalImgData.data);
+        let brightnessValue = parseInt(e.target.value, 10);
+
+        for (let i = 0; i < data.length; i += 4) {
+            data[i] = data[i] + brightnessValue;
+            data[i + 1] = data[i + 1] + brightnessValue;
+            data[i + 2] = data[i + 2] + brightnessValue;
+        }
+        let newImageData = new ImageData(data, OrignalImgData.width, OrignalImgData.height);
+        context.putImageData(newImageData, 0, 0);
+    }
+
+
+    const [contrast, setContrast] = useState(0);
+    function handleContrastChange(e) {
+        setContrast(e.target.value);
+    }
+
+    const [RGB, setRGB] = useState({red: 0, green: 0, blue: 0});
+    function handleRGBChange(e) {
+        const {name , value } = e.target;
+        setRGB(prev => ({...prev, [name]: parseInt(value)}));
+    }
     return (
-            <div style={styles.container}>
-                <canvas ref={CanvasRef} />
-            </div>
+        <div style={styles.container}>
+            <Toolbar/>
+            <canvas ref={CanvasRef}/>
+            <RangeMenu handleBrightnessChange={handleBrightnessChange}
+                       handleContrastChange={handleContrastChange}
+                       handleRGBChange={handleRGBChange}
+                       Brightness={parseInt(Brightness)} contrast={parseInt(contrast)} RGB={RGB}/>
+        </div>
     )
 
 }
@@ -34,8 +78,8 @@ const styles = {
         width: '100%',
         height: 'window.height',
         display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
         alignItems: 'center',
     }
 }

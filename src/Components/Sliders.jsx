@@ -10,7 +10,7 @@ function Slider(props) {
     return (
         <div style={Style.container}>
             <h3>{props.name} <span>{value}</span></h3>
-            <input type = "range" min={-100} max={100} step={0.1} value={value} onChange={onValueChange} name={props.name} />
+            <input type = "range" min={-100} max={100} step={1} value={value} onChange={onValueChange} name={props.name} />
         </div>
     )
 }

@@ -1,24 +1,18 @@
-﻿import {useState} from "react";
-import Sliders from "./Sliders.jsx";
+﻿import Sliders from "./Sliders.jsx";
 import Headings from "./Heading.jsx";
 import styled from 'styled-components';
-function RangeMenu() {
+import PropTypes from "prop-types";
 
-    const [Brightness, setBrightness] = useState(0);
+function RangeMenu(props) {
+
     function handleBrightnessChange(e) {
-        setBrightness(e.target.value);
+        props.handleBrightnessChange(e);
     }
-
-    const [contrast, setContrast] = useState(0);
     function handleContrastChange(e) {
-        setContrast(e.target.value);
+        props.handleContrastChange(e);
     }
-
-    const [RGB, setRGB] = useState({red: 0, green: 0, blue: 0});
     function handleRGBChange(e) {
-        const {name , value } = e.target;
-        console.log(e.target);
-        setRGB(prev => ({...prev, [name]: parseInt(value)}));
+        props.handleRGBChange(e);
     }
 
     return(
@@ -29,13 +23,13 @@ function RangeMenu() {
                     <div className="card">
                         <div className="card2">
                             <div style={Style.container}>
-                                <Sliders value={parseInt(Brightness)} onValueChange={handleBrightnessChange}
+                                <Sliders value={parseInt(props.Brightness)} onValueChange={handleBrightnessChange}
                                          name="Brightness"/>
-                                <Sliders value={parseInt(contrast)} onValueChange={handleContrastChange}
+                                <Sliders value={parseInt(props.contrast)} onValueChange={handleContrastChange}
                                          name="Contrast"/>
-                                <Sliders value={parseInt(RGB.red)} onValueChange={handleRGBChange} name='red'/>
-                                <Sliders value={parseInt(RGB.green)} onValueChange={handleRGBChange} name='green'/>
-                                <Sliders value={parseInt(RGB.blue)} onValueChange={handleRGBChange} name='blue'/>
+                                <Sliders value={parseInt(props.RGB.red)} onValueChange={handleRGBChange} name='red'/>
+                                <Sliders value={parseInt(props.RGB.green)} onValueChange={handleRGBChange} name='green'/>
+                                <Sliders value={parseInt(props.RGB.blue)} onValueChange={handleRGBChange} name='blue'/>
                             </div>
                         </div>
                     </div>
@@ -44,6 +38,16 @@ function RangeMenu() {
 
         </div>
     )
+}
+
+RangeMenu.propTypes = {
+    handleBrightnessChange: PropTypes.func.isRequired,
+    handleContrastChange: PropTypes.func.isRequired,
+    handleRGBChange: PropTypes.func.isRequired,
+
+    Brightness: PropTypes.number.isRequired,
+    contrast: PropTypes.number.isRequired,
+    RGB: PropTypes.object.isRequired,
 }
 
 export default RangeMenu
