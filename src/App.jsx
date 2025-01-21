@@ -6,12 +6,12 @@ function App() {
     const [isImage, setIsImage] = useState(false);
     const [Img, setImg] = useState(null);
     const [ToRender, setToRender] = useState(null);
-
+    const [name, setName] = useState("");
 
 
     useEffect(() => {
-        setToRender(isImage? <Editor IMG={Img} />:
-        <ImageForm setIsImage={setIsImage} setImg={setImg}/>)
+        setToRender(isImage? <Editor IMG={Img} Name={name}/>:
+        <ImageForm setIsImage={setIsImage} setImg={setImg} setName={setName} />)
     },[isImage, Img])
 
     return (

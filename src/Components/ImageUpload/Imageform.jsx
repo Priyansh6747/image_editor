@@ -1,7 +1,7 @@
 ﻿import PropTypes from "prop-types";
 import {useEffect, useState} from "react";
 import InputFile from "./InputFile.jsx"
-import Button from "../Button.jsx"
+import Button from "../Buttons/Button.jsx"
 import ImageCard from "./ImageCard.jsx";
 function ImageForm(props){
     const [ImgData, setImgData] = useState(null);
@@ -11,6 +11,7 @@ function ImageForm(props){
     
     useEffect(() => {
         setMsg(ImgData? ImgData.name :"");
+        props.setName(ImgData? ImgData.name : "");
         setButtonText(ImgData? "Confirm" : "Upload");
         setToRender(ImgData? <ImageCard URL={URL.createObjectURL(ImgData)}/> : <InputFile onValueChange={handleChange}/>)
     },[ImgData])
@@ -41,6 +42,7 @@ export default ImageForm;
 ImageForm.propTypes = {
     setIsImage: PropTypes.func.isRequired,
     setImg: PropTypes.func.isRequired,
+    setName: PropTypes.func.isRequired,
 }
 
 const Style = {

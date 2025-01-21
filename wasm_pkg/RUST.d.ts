@@ -1,12 +1,18 @@
 /* tslint:disable */
 /* eslint-disable */
-export function increase_brightness(data: Uint8Array, value: number): void;
+export function handle_brightness(data: Uint8Array, value: number): void;
+export function handle_rgb(data: Uint8Array, red_value: number, green_value: number, blue_value: number): void;
+export function handle_contrast(data: Uint8Array, contrast: number): void;
+export function update_img(data: Uint8Array, brightness: number, contrast: number, red: number, green: number, blue: number): void;
 
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
 
 export interface InitOutput {
   readonly memory: WebAssembly.Memory;
-  readonly increase_brightness: (a: number, b: number, c: any, d: number) => void;
+  readonly handle_brightness: (a: number, b: number, c: any, d: number) => void;
+  readonly handle_rgb: (a: number, b: number, c: any, d: number, e: number, f: number) => void;
+  readonly handle_contrast: (a: number, b: number, c: any, d: number) => void;
+  readonly update_img: (a: number, b: number, c: any, d: number, e: number, f: number, g: number, h: number) => void;
   readonly __wbindgen_export_0: WebAssembly.Table;
   readonly __wbindgen_malloc: (a: number, b: number) => number;
   readonly __wbindgen_start: () => void;

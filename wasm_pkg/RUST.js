@@ -26,10 +26,46 @@ function passArray8ToWasm0(arg, malloc) {
  * @param {Uint8Array} data
  * @param {number} value
  */
-export function increase_brightness(data, value) {
+export function handle_brightness(data, value) {
     var ptr0 = passArray8ToWasm0(data, wasm.__wbindgen_malloc);
     var len0 = WASM_VECTOR_LEN;
-    wasm.increase_brightness(ptr0, len0, data, value);
+    wasm.handle_brightness(ptr0, len0, data, value);
+}
+
+/**
+ * @param {Uint8Array} data
+ * @param {number} red_value
+ * @param {number} green_value
+ * @param {number} blue_value
+ */
+export function handle_rgb(data, red_value, green_value, blue_value) {
+    var ptr0 = passArray8ToWasm0(data, wasm.__wbindgen_malloc);
+    var len0 = WASM_VECTOR_LEN;
+    wasm.handle_rgb(ptr0, len0, data, red_value, green_value, blue_value);
+}
+
+/**
+ * @param {Uint8Array} data
+ * @param {number} contrast
+ */
+export function handle_contrast(data, contrast) {
+    var ptr0 = passArray8ToWasm0(data, wasm.__wbindgen_malloc);
+    var len0 = WASM_VECTOR_LEN;
+    wasm.handle_contrast(ptr0, len0, data, contrast);
+}
+
+/**
+ * @param {Uint8Array} data
+ * @param {number} brightness
+ * @param {number} contrast
+ * @param {number} red
+ * @param {number} green
+ * @param {number} blue
+ */
+export function update_img(data, brightness, contrast, red, green, blue) {
+    var ptr0 = passArray8ToWasm0(data, wasm.__wbindgen_malloc);
+    var len0 = WASM_VECTOR_LEN;
+    wasm.update_img(ptr0, len0, data, brightness, contrast, red, green, blue);
 }
 
 async function __wbg_load(module, imports) {
