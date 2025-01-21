@@ -2,6 +2,7 @@
 import {useEffect, useRef, useState} from "react";
 import RangeMenu from "./RangeMenu.jsx";
 import Toolbar from "./tools/Toolbar.jsx";
+import init ,{increase_brightness} from "./../../wasm_pkg/RUST.js"
 
 window.addEventListener('beforeunload', function (e) {
     const message = "Are you sure you want to leave? Any unsaved changes will be lost.";
@@ -33,16 +34,15 @@ function Editor(props) {
     function handleBrightnessChange(e) {
         setBrightness(e.target.value);
         let context = CanvasRef.current.getContext("2d");
-        let data = new Uint8ClampedArray(OrignalImgData.data);
+        let data = new Uint8Array(OrignalImgData.data);
         let brightnessValue = parseInt(e.target.value, 10);
+        init().then(()=>{
+            increase_brightness(data , brightnessValue);
+            data = new Uint8ClampedArray(data.buffer);
+            let newImageData = new ImageData(data, OrignalImgData.width, OrignalImgData.height);
+            context.putImageData(newImageData, 0, 0);
+        });
 
-        for (let i = 0; i < data.length; i += 4) {
-            data[i] = data[i] + brightnessValue;
-            data[i + 1] = data[i + 1] + brightnessValue;
-            data[i + 2] = data[i + 2] + brightnessValue;
-        }
-        let newImageData = new ImageData(data, OrignalImgData.width, OrignalImgData.height);
-        context.putImageData(newImageData, 0, 0);
     }
 
 
