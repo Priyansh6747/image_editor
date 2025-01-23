@@ -100,7 +100,7 @@ function Editor(props) {
 
     return (
         <div style={styles.container}>
-            <Toolbar/>
+            <Toolbar rotateRight={rotateRight}/>
             <canvas ref={CanvasRef}/>
             <RangeMenu handleBrightnessChange={handleBrightnessChange}
                        handleContrastChange={handleContrastChange}
@@ -121,7 +121,6 @@ Editor.propTypes = {
     Name: PropTypes.string,
 }
 
-// Note the styling of DownloadBtn is in index.css
 const styles = {
     container: {
         width: '100%',
