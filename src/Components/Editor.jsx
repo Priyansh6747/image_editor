@@ -2,7 +2,7 @@
 import {useEffect, useRef, useState} from "react";
 import RangeMenu from "./RangeMenu.jsx";
 import Toolbar from "./tools/Toolbar.jsx";
-import init ,{update_img} from "./../../wasm_pkg/RUST.js"
+import init ,{update_img , rotate_right} from "./../../wasm_pkg/RUST.js"
 import Download from "./Buttons/Download.jsx";
 
 window.addEventListener('beforeunload', function (e) {
@@ -78,9 +78,29 @@ function Editor(props) {
         })
     }
 
+    function rotateRight() {
+        let context = CanvasRef.current.getContext("2d");
+        init().then(()=>{
+            rotate_right(OrignalImgData.data , OrignalImgData.width);
+            let newW = OrignalImgData.height;
+            let newH = OrignalImgData.width;
+            CanvasRef.current.width = newW;
+            CanvasRef.current.height = newH;
+            let newImg = {
+                width: newW,
+                height: newH,
+                ...OrignalImgData,
+            }
+            setOrignalImgData(newImg);
+            context.putImageData(OrignalImgData, 0, 0);
+            updateImage();
+        })
+
+    }
+
     return (
         <div style={styles.container}>
-            <Toolbar/>
+            <Toolbar roateRight = {rotateRight}/>
             <canvas ref={CanvasRef}/>
             <RangeMenu handleBrightnessChange={handleBrightnessChange}
                        handleContrastChange={handleContrastChange}
