@@ -68,6 +68,16 @@ export function update_img(data, brightness, contrast, red, green, blue) {
     wasm.update_img(ptr0, len0, data, brightness, contrast, red, green, blue);
 }
 
+/**
+ * @param {Uint8Array} data
+ * @param {number} width
+ */
+export function rotate_right(data, width) {
+    var ptr0 = passArray8ToWasm0(data, wasm.__wbindgen_malloc);
+    var len0 = WASM_VECTOR_LEN;
+    wasm.rotate_right(ptr0, len0, data, width);
+}
+
 async function __wbg_load(module, imports) {
     if (typeof Response === 'function' && module instanceof Response) {
         if (typeof WebAssembly.instantiateStreaming === 'function') {

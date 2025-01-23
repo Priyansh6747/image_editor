@@ -2,7 +2,7 @@
 import {useEffect, useRef, useState} from "react";
 import RangeMenu from "./RangeMenu.jsx";
 import Toolbar from "./tools/Toolbar.jsx";
-import init ,{update_img} from "./../../wasm_pkg/RUST.js"
+import init ,{update_img , rotate_right} from "./../../wasm_pkg/RUST.js"
 import Download from "./Buttons/Download.jsx";
 
 window.addEventListener('beforeunload', function (e) {
@@ -17,6 +17,7 @@ function Editor(props) {
     const imageRef = useRef(new Image());
     const CanvasRef = useRef(null);
     const [OrignalImgData, setOrignalImgData] = useState(null);
+    const [CurrentImage, setCurrentImage] = useState(null);
 
 
 
@@ -34,6 +35,7 @@ function Editor(props) {
             canvas.height = imgHeight * scaleFactor;
             context.drawImage(imageRef.current, 0, 0, canvas.width, canvas.height);
             if(!OrignalImgData) setOrignalImgData(context.getImageData(0, 0, canvas.width, canvas.height));
+            if(!CurrentImage) setCurrentImage(context.getImageData(0, 0, canvas.width, canvas.height));
         }
     },[props.IMG])
 
@@ -73,9 +75,27 @@ function Editor(props) {
         init().then(()=>{
             update_img(data,Brightness,contrast,RGB.red,RGB.green,RGB.blue);
             data = new Uint8ClampedArray(data.buffer);
-            let newImageData = new ImageData(data, OrignalImgData.width, OrignalImgData.height);
+            let newImageData = new ImageData(data, OrignalImgData.height, OrignalImgData.width);
             context.putImageData(newImageData, 0, 0);
+            setCurrentImage(newImageData);
         })
+    }
+
+    function rotateRight() {
+        let context = CanvasRef.current.getContext("2d");
+        let data = new Uint8Array(CurrentImage.data);
+        init().then(()=>{
+            rotate_right(data , CurrentImage.width);
+            let newW = CurrentImage.height;
+            let newH = CurrentImage.width;
+            CanvasRef.current.width = newW;
+            CanvasRef.current.height = newH;
+            data = new Uint8ClampedArray(data.buffer);
+            let newImageData = new ImageData(data, CurrentImage.height, CurrentImage.width);
+            context.putImageData(newImageData, 0, 0);
+            setCurrentImage(newImageData);
+        })
+
     }
 
     return (

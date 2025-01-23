@@ -1,6 +1,7 @@
 use wasm_bindgen::__rt::flat_byte_slices;
 use wasm_bindgen::prelude::*;
-
+extern crate image;
+use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
 extern "C" {
@@ -61,3 +62,54 @@ pub fn update_img(data: &mut [u8] , brightness:i8, contrast:i32 ,red:i8, green:i
     handle_brightness(data, brightness);
     handle_contrast(data, contrast);
 }
+
+struct Pixel {
+    r: u8,
+    g: u8,
+    b: u8,
+    alpha: u8,
+}
+impl Pixel {
+    fn new(r:u8, g:u8, b:u8, alpha:u8) -> Pixel {
+        Pixel { r, g, b, alpha }
+    }
+    fn clone (&self) -> Pixel {
+        Pixel::new(self.r, self.g, self.b, self.alpha)
+    }
+}
+#[wasm_bindgen]
+pub fn rotate_right(data: &mut [u8], width: usize) {
+    let height = data.len() / (4 * width);
+    let mut pixels: Vec<Pixel> = Vec::with_capacity(data.len() / 4);
+    // Step 1: Create a pixel array
+    for chunk in data.chunks_exact(4) {
+        let pixel = Pixel {
+            r: chunk[0],
+            g: chunk[1],
+            b: chunk[2],
+            alpha: chunk[3],
+        };
+        pixels.push(pixel);
+    }
+    // Step 2: Create a temporary array for column-wise rotation
+    let mut temp: Vec<Pixel> = Vec::with_capacity(pixels.len());
+    for col in 0..width {
+        for row in (0..height).rev() {
+            temp.push(pixels[row * width + col].clone());
+        }
+    }
+    // Step 3: Flatten the temp array back into the original data
+    for (i, pixel) in temp.iter().enumerate() {
+        let base = i * 4;
+        data[base] = pixel.r;
+        data[base + 1] = pixel.g;
+        data[base + 2] = pixel.b;
+        data[base + 3] = pixel.alpha;
+    }
+}
+
+
+
+
+
+
