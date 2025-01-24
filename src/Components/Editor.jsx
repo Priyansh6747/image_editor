@@ -80,23 +80,31 @@ function Editor(props) {
 
     function rotateRight() {
         let context = CanvasRef.current.getContext("2d");
-        init().then(()=>{
-            rotate_right(OrignalImgData.data , OrignalImgData.width);
+        init().then(() => {
+            rotate_right(OrignalImgData.data, OrignalImgData.width);
             let newW = OrignalImgData.height;
             let newH = OrignalImgData.width;
-            CanvasRef.current.width = newW;
-            CanvasRef.current.height = newH;
-            let newImg = {
+            let newImageData = new ImageData(
+                new Uint8ClampedArray(OrignalImgData.data),
+                newW,
+                newH
+            );
+            setOrignalImgData({
+                data: newImageData.data,
                 width: newW,
                 height: newH,
-                ...OrignalImgData,
-            }
-            setOrignalImgData(newImg);
-            context.putImageData(OrignalImgData, 0, 0);
-            updateImage();
-        })
-
+            });
+            CanvasRef.current.width = newW;
+            CanvasRef.current.height = newH;
+            let data = new Uint8Array(newImageData.data);
+            update_img(data,Brightness,contrast,RGB.red,RGB.green,RGB.blue);
+            data = new Uint8ClampedArray(data.buffer);
+            let newImage = new ImageData(data, newImageData.width, newImageData.height);
+            context.putImageData(newImage, 0, 0);
+        });
     }
+
+
 
     return (
         <div style={styles.container}>
@@ -107,7 +115,7 @@ function Editor(props) {
                        handleRGBChange={handleRGBChange}
                        Brightness={parseInt(Brightness)} contrast={parseInt(contrast)} RGB={RGB}/>
             <div style={styles.Download}>
-                <Download HandleClick={handleDownload}/>
+                <Download HandleClick={rotateRight}/>
             </div>
 
         </div>
