@@ -1,7 +1,6 @@
 use wasm_bindgen::__rt::flat_byte_slices;
 use wasm_bindgen::prelude::*;
-extern crate image;
-use wasm_bindgen::prelude::*;
+
 
 #[wasm_bindgen]
 extern "C" {
@@ -107,9 +106,3 @@ pub fn rotate_right(data: &mut [u8], width: usize) {
         data[base + 3] = pixel.alpha;
     }
 }
-
-
-
-
-
-

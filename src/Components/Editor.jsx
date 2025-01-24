@@ -17,7 +17,6 @@ function Editor(props) {
     const imageRef = useRef(new Image());
     const CanvasRef = useRef(null);
     const [OrignalImgData, setOrignalImgData] = useState(null);
-    const [CurrentImage, setCurrentImage] = useState(null);
 
 
 
@@ -35,7 +34,6 @@ function Editor(props) {
             canvas.height = imgHeight * scaleFactor;
             context.drawImage(imageRef.current, 0, 0, canvas.width, canvas.height);
             if(!OrignalImgData) setOrignalImgData(context.getImageData(0, 0, canvas.width, canvas.height));
-            if(!CurrentImage) setCurrentImage(context.getImageData(0, 0, canvas.width, canvas.height));
         }
     },[props.IMG])
 
@@ -75,32 +73,42 @@ function Editor(props) {
         init().then(()=>{
             update_img(data,Brightness,contrast,RGB.red,RGB.green,RGB.blue);
             data = new Uint8ClampedArray(data.buffer);
-            let newImageData = new ImageData(data, OrignalImgData.height, OrignalImgData.width);
+            let newImageData = new ImageData(data, OrignalImgData.width, OrignalImgData.height);
             context.putImageData(newImageData, 0, 0);
-            setCurrentImage(newImageData);
         })
     }
 
     function rotateRight() {
         let context = CanvasRef.current.getContext("2d");
-        let data = new Uint8Array(CurrentImage.data);
-        init().then(()=>{
-            rotate_right(data , CurrentImage.width);
-            let newW = CurrentImage.height;
-            let newH = CurrentImage.width;
+        init().then(() => {
+            rotate_right(OrignalImgData.data, OrignalImgData.width);
+            let newW = OrignalImgData.height;
+            let newH = OrignalImgData.width;
+            let newImageData = new ImageData(
+                new Uint8ClampedArray(OrignalImgData.data),
+                newW,
+                newH
+            );
+            setOrignalImgData({
+                data: newImageData.data,
+                width: newW,
+                height: newH,
+            });
             CanvasRef.current.width = newW;
             CanvasRef.current.height = newH;
+            let data = new Uint8Array(newImageData.data);
+            update_img(data,Brightness,contrast,RGB.red,RGB.green,RGB.blue);
             data = new Uint8ClampedArray(data.buffer);
-            let newImageData = new ImageData(data, CurrentImage.height, CurrentImage.width);
-            context.putImageData(newImageData, 0, 0);
-            setCurrentImage(newImageData);
-        })
-
+            let newImage = new ImageData(data, newImageData.width, newImageData.height);
+            context.putImageData(newImage, 0, 0);
+        });
     }
+
+
 
     return (
         <div style={styles.container}>
-            <Toolbar rotateRight={rotateRight}/>
+            <Toolbar roateRight = {rotateRight}/>
             <canvas ref={CanvasRef}/>
             <RangeMenu handleBrightnessChange={handleBrightnessChange}
                        handleContrastChange={handleContrastChange}
@@ -121,6 +129,7 @@ Editor.propTypes = {
     Name: PropTypes.string,
 }
 
+// Note the styling of DownloadBtn is in index.css
 const styles = {
     container: {
         width: '100%',
