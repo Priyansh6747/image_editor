@@ -78,6 +78,15 @@ export function rotate_right(data, width) {
     wasm.rotate_right(ptr0, len0, data, width);
 }
 
+/**
+ * @param {Uint8Array} data
+ */
+export function greyscale(data) {
+    var ptr0 = passArray8ToWasm0(data, wasm.__wbindgen_malloc);
+    var len0 = WASM_VECTOR_LEN;
+    wasm.greyscale(ptr0, len0, data);
+}
+
 async function __wbg_load(module, imports) {
     if (typeof Response === 'function' && module instanceof Response) {
         if (typeof WebAssembly.instantiateStreaming === 'function') {

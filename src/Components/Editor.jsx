@@ -2,7 +2,7 @@
 import {useEffect, useRef, useState} from "react";
 import RangeMenu from "./RangeMenu.jsx";
 import Toolbar from "./tools/Toolbar.jsx";
-import init ,{update_img , rotate_right} from "./../../wasm_pkg/RUST.js"
+import init ,{update_img , rotate_right , greyscale} from "./../../wasm_pkg/RUST.js"
 import Download from "./Buttons/Download.jsx";
 
 window.addEventListener('beforeunload', function (e) {
@@ -104,11 +104,41 @@ function Editor(props) {
         });
     }
 
+    function greyScale(){
+        let context = CanvasRef.current.getContext("2d");
+        init().then(() => {
+            greyscale(OrignalImgData.data);
+            let newW = OrignalImgData.width;
+            let newH = OrignalImgData.height;
+            let newImageData = new ImageData(
+                new Uint8ClampedArray(OrignalImgData.data),
+                newW,
+                newH
+            );
+            setOrignalImgData({
+                data: newImageData.data,
+                width: newW,
+                height: newH,
+            });
+            CanvasRef.current.width = newW;
+            CanvasRef.current.height = newH;
+            let data = new Uint8Array(newImageData.data);
+            update_img(data,Brightness,contrast,RGB.red,RGB.green,RGB.blue);
+            data = new Uint8ClampedArray(data.buffer);
+            let newImage = new ImageData(data, newImageData.width, newImageData.height);
+            context.putImageData(newImage, 0, 0);
+        });
+    }
+
+    function reset(){
+        setOrignalImgData(props.IMG);
+        updateImage();
+    }
 
 
     return (
         <div style={styles.container}>
-            <Toolbar roateRight = {rotateRight}/>
+            <Toolbar rotateRight={rotateRight} greyScale={greyScale} Reset={reset}/>
             <canvas ref={CanvasRef}/>
             <RangeMenu handleBrightnessChange={handleBrightnessChange}
                        handleContrastChange={handleContrastChange}

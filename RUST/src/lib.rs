@@ -106,3 +106,15 @@ pub fn rotate_right(data: &mut [u8], width: usize) {
         data[base + 3] = pixel.alpha;
     }
 }
+
+#[wasm_bindgen]
+pub fn greyscale(data: &mut [u8]) {
+    for pixel in data.chunks_exact_mut(4) {
+        let avg:u8  =((pixel[0] as f32 * 0.299 ) +
+                     (pixel[1] as f32 * 0.587 ) +
+                     (pixel[2] as f32 * 0.114) ) as u8;
+        pixel[0] = avg;
+        pixel[1] = avg;
+        pixel[2] = avg;
+    }
+}
