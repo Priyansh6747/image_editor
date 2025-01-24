@@ -1,18 +1,22 @@
-﻿
-function Toolbar(){
+﻿import TempBtn from "../Buttons/Download.jsx"
+import PropTypes from "prop-types";
+function Toolbar(props){
 
     return (
         <div style={Style.container}>
-            <h1>T</h1>
-            <h1>T</h1>
-            <h1>T</h1>
-            <h1>T</h1>
-            <h1>T</h1>
+            <TempBtn HandleClick = {props.rotateRight} />
+            <TempBtn HandleClick = {props.greyScale}/>
+            <TempBtn HandleClick = {props.Reset} />
         </div>
     )
 }
 
 export default Toolbar;
+Toolbar.propTypes = {
+    rotateRight: PropTypes.func.isRequired,
+    greyScale: PropTypes.func.isRequired,
+    Reset: PropTypes.func.isRequired,
+}
 
 const Style = {
     container: {
