@@ -115,7 +115,7 @@ function Editor(props) {
                        handleRGBChange={handleRGBChange}
                        Brightness={parseInt(Brightness)} contrast={parseInt(contrast)} RGB={RGB}/>
             <div style={styles.Download}>
-                <Download HandleClick={rotateRight}/>
+                <Download HandleClick={handleDownload}/>
             </div>
 
         </div>
