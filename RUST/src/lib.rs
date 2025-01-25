@@ -118,3 +118,24 @@ pub fn greyscale(data: &mut [u8]) {
         pixel[2] = avg;
     }
 }
+
+#[wasm_bindgen]
+pub fn sepia(data: &mut [u8]) {
+    for pixel in data.chunks_exact_mut(4) {
+        let r = pixel[0] as f64;
+        let g = pixel[1] as f64;
+        let b = pixel[2] as f64;
+        pixel[0] = (0.393 * r + 0.769 * g + 0.189 * b) as u8;
+        pixel[1] = (0.349 * r + 0.686 * g + 0.168 * b) as u8;
+        pixel[2] = (0.272 * r + 0.534 * g + 0.131 * b) as u8;
+    }
+}
+
+#[wasm_bindgen]
+pub fn invert(data: &mut [u8]) {
+    for pixel in data.chunks_exact_mut(4) {
+        pixel[0] = 255 - pixel[0];
+        pixel[1] = 255 - pixel[1];
+        pixel[2] = 255 - pixel[2];
+    }
+}

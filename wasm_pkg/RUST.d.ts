@@ -6,6 +6,8 @@ export function handle_contrast(data: Uint8Array, contrast: number): void;
 export function update_img(data: Uint8Array, brightness: number, contrast: number, red: number, green: number, blue: number): void;
 export function rotate_right(data: Uint8Array, width: number): void;
 export function greyscale(data: Uint8Array): void;
+export function sepia(data: Uint8Array): void;
+export function invert(data: Uint8Array): void;
 
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
 
@@ -17,6 +19,8 @@ export interface InitOutput {
   readonly update_img: (a: number, b: number, c: any, d: number, e: number, f: number, g: number, h: number) => void;
   readonly rotate_right: (a: number, b: number, c: any, d: number) => void;
   readonly greyscale: (a: number, b: number, c: any) => void;
+  readonly sepia: (a: number, b: number, c: any) => void;
+  readonly invert: (a: number, b: number, c: any) => void;
   readonly __wbindgen_export_0: WebAssembly.Table;
   readonly __wbindgen_malloc: (a: number, b: number) => number;
   readonly __wbindgen_start: () => void;

@@ -1,5 +1,5 @@
 ﻿import PropTypes from "prop-types";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 
 function Slider(props) {
     const [value, setValue] = useState(props.value);
@@ -7,6 +7,9 @@ function Slider(props) {
         setValue(e.target.value);
         props.onValueChange(e);
     }
+    useEffect(() => {
+        setValue(0);
+    },[props.Reset])
     return (
         <div style={Style.container}>
             <h3>{props.name} <span>{value}</span></h3>
@@ -18,7 +21,8 @@ export default  Slider;
 Slider.propTypes = {
     value: PropTypes.number.isRequired,
     onValueChange: PropTypes.func.isRequired,
-    name: PropTypes.string.isRequired
+    name: PropTypes.string.isRequired,
+    Reset: PropTypes.number
 }
 
 const Style = {

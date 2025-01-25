@@ -1,12 +1,15 @@
-﻿import TempBtn from "../Buttons/Download.jsx"
+﻿import {ResetTool,RotateTool,GeyScale,SepiaTool,InvertTool} from "./Tool.jsx"
 import PropTypes from "prop-types";
+
 function Toolbar(props){
 
     return (
         <div style={Style.container}>
-            <TempBtn HandleClick = {props.rotateRight} />
-            <TempBtn HandleClick = {props.greyScale}/>
-            <TempBtn HandleClick = {props.Reset} />
+            <RotateTool HandleClick={props.rotateRight} />
+            <SepiaTool HandleClick={props.Sepia} />
+            <GeyScale HandleClick = {props.greyScale}/>
+            <InvertTool HandleClick = {props.invert}/>
+            <ResetTool HandleClick = {props.Reset} />
         </div>
     )
 }
@@ -15,6 +18,8 @@ export default Toolbar;
 Toolbar.propTypes = {
     rotateRight: PropTypes.func.isRequired,
     greyScale: PropTypes.func.isRequired,
+    Sepia: PropTypes.func.isRequired,
+    invert: PropTypes.func.isRequired,
     Reset: PropTypes.func.isRequired,
 }
 

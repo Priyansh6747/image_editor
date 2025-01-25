@@ -2,7 +2,7 @@
 import {useEffect, useRef, useState} from "react";
 import RangeMenu from "./RangeMenu.jsx";
 import Toolbar from "./tools/Toolbar.jsx";
-import init ,{update_img , rotate_right , greyscale} from "./../../wasm_pkg/RUST.js"
+import init ,{update_img , rotate_right , greyscale , sepia , invert} from "./../../wasm_pkg/RUST.js"
 import Download from "./Buttons/Download.jsx";
 
 window.addEventListener('beforeunload', function (e) {
@@ -57,6 +57,11 @@ function Editor(props) {
         updateImage();
     }
 
+    const [resetCount , setResetCount] = useState(0);
+    function increaseResetCount() {
+        setResetCount(resetCount + 1);
+    }
+
     function handleDownload(){
         const canvas = CanvasRef.current;
         canvas.toBlob((blob)=>{
@@ -105,45 +110,83 @@ function Editor(props) {
     }
 
     function greyScale(){
-        let context = CanvasRef.current.getContext("2d");
         init().then(() => {
             greyscale(OrignalImgData.data);
-            let newW = OrignalImgData.width;
-            let newH = OrignalImgData.height;
-            let newImageData = new ImageData(
-                new Uint8ClampedArray(OrignalImgData.data),
-                newW,
-                newH
-            );
-            setOrignalImgData({
-                data: newImageData.data,
-                width: newW,
-                height: newH,
-            });
-            CanvasRef.current.width = newW;
-            CanvasRef.current.height = newH;
-            let data = new Uint8Array(newImageData.data);
-            update_img(data,Brightness,contrast,RGB.red,RGB.green,RGB.blue);
-            data = new Uint8ClampedArray(data.buffer);
-            let newImage = new ImageData(data, newImageData.width, newImageData.height);
-            context.putImageData(newImage, 0, 0);
+            PutImage();
+        });
+    }
+    function Sepia(){
+        init().then(() => {
+            sepia(OrignalImgData.data);
+            PutImage();
+        });
+    }function Invert(){
+        init().then(() => {
+            invert(OrignalImgData.data);
+            PutImage();
         });
     }
 
-    function reset(){
-        setOrignalImgData(props.IMG);
-        updateImage();
+    function PutImage(){
+        let context = CanvasRef.current.getContext("2d");
+        let newW = OrignalImgData.width;
+        let newH = OrignalImgData.height;
+        let newImageData = new ImageData(
+            new Uint8ClampedArray(OrignalImgData.data),
+            newW,
+            newH
+        );
+        setOrignalImgData({
+            data: newImageData.data,
+            width: newW,
+            height: newH,
+        });
+        CanvasRef.current.width = newW;
+        CanvasRef.current.height = newH;
+        let data = new Uint8Array(newImageData.data);
+        update_img(data,Brightness,contrast,RGB.red,RGB.green,RGB.blue);
+        data = new Uint8ClampedArray(data.buffer);
+        let newImage = new ImageData(data, newImageData.width, newImageData.height);
+        context.putImageData(newImage, 0, 0);
     }
+
+    function reset() {
+        imageRef.current.src = URL.createObjectURL(new Blob([props.IMG]));
+        imageRef.current.onload = () => {
+            const canvas = CanvasRef.current;
+            const context = canvas.getContext("2d");
+            const imgWidth = imageRef.current.width;
+            const imgHeight = imageRef.current.height;
+            const maxCanvasWidth = window.innerWidth * 0.8;
+            const maxCanvasHeight = window.innerHeight;
+            const scaleFactor = Math.min(maxCanvasWidth / imgWidth, maxCanvasHeight / imgHeight);
+            canvas.width = imgWidth * scaleFactor;
+            canvas.height = imgHeight * scaleFactor;
+            context.drawImage(imageRef.current, 0, 0, canvas.width, canvas.height);
+            const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+            setOrignalImgData({
+                data: imageData.data,
+                width: canvas.width,
+                height: canvas.height,
+            });
+            setBrightness(0);
+            setContrast(0);
+            setRGB({ red: 0, green: 0, blue: 0 });
+            increaseResetCount();
+        };
+    }
+
+
 
 
     return (
         <div style={styles.container}>
-            <Toolbar rotateRight={rotateRight} greyScale={greyScale} Reset={reset}/>
+            <Toolbar rotateRight={rotateRight} greyScale={greyScale} Sepia={Sepia} invert={Invert} Reset={reset}/>
             <canvas ref={CanvasRef}/>
             <RangeMenu handleBrightnessChange={handleBrightnessChange}
                        handleContrastChange={handleContrastChange}
                        handleRGBChange={handleRGBChange}
-                       Brightness={parseInt(Brightness)} contrast={parseInt(contrast)} RGB={RGB}/>
+                       Brightness={parseInt(Brightness)} contrast={parseInt(contrast)} RGB={RGB} Reset={resetCount}/>
             <div style={styles.Download}>
                 <Download HandleClick={handleDownload}/>
             </div>

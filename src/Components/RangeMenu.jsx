@@ -24,12 +24,12 @@ function RangeMenu(props) {
                         <div className="card2">
                             <div style={Style.container}>
                                 <Sliders value={parseInt(props.Brightness)} onValueChange={handleBrightnessChange}
-                                         name="Brightness"/>
+                                         name="Brightness" Reset={props.Reset}/>
                                 <Sliders value={parseInt(props.contrast)} onValueChange={handleContrastChange}
-                                         name="Contrast"/>
-                                <Sliders value={parseInt(props.RGB.red)} onValueChange={handleRGBChange} name='red'/>
-                                <Sliders value={parseInt(props.RGB.green)} onValueChange={handleRGBChange} name='green'/>
-                                <Sliders value={parseInt(props.RGB.blue)} onValueChange={handleRGBChange} name='blue'/>
+                                         name="Contrast" Reset={props.Reset}/>
+                                <Sliders value={parseInt(props.RGB.red)} onValueChange={handleRGBChange} name='red' Reset={props.Reset}/>
+                                <Sliders value={parseInt(props.RGB.green)} onValueChange={handleRGBChange} name='green' Reset={props.Reset}/>
+                                <Sliders value={parseInt(props.RGB.blue)} onValueChange={handleRGBChange} name='blue' Reset={props.Reset}/>
                             </div>
                         </div>
                     </div>
@@ -48,6 +48,7 @@ RangeMenu.propTypes = {
     Brightness: PropTypes.number.isRequired,
     contrast: PropTypes.number.isRequired,
     RGB: PropTypes.object.isRequired,
+    Reset: PropTypes.number
 }
 
 export default RangeMenu
