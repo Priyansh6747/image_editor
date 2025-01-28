@@ -5,14 +5,18 @@ import { VscColorMode } from "react-icons/vsc";
 import { MdOutlineWhatshot } from "react-icons/md";
 import { IoInvertMode } from "react-icons/io5";
 import { FaCropSimple } from "react-icons/fa6";
+import { TbBlur } from "react-icons/tb";
+import { IoFlowerSharp } from "react-icons/io5";
+import { AiTwotoneGold } from "react-icons/ai";
+import { FaViacoin } from "react-icons/fa6";
 import styled from "styled-components";
 
 // eslint-disable-next-line react/jsx-key
 const IconArray = [<GrRotateRight className="icon"/> , <VscColorMode className="icon"/> , <MdOutlineWhatshot className="icon"/>,
 // eslint-disable-next-line react/jsx-key
-    <IoInvertMode className="icon"/>,<FaCropSimple className="icon"/>, <RxReset className="icon"/>
+    <IoInvertMode className="icon"/>,<FaCropSimple className="icon"/>,<TbBlur className="icon"/>,<IoFlowerSharp className="icon"/>,<AiTwotoneGold className="icon"/>,<FaViacoin className="icon"/>, <RxReset className="icon"/>
 ];
-// IconOrder -> Rotate GreyScale SepiaTool InvertTool Crop Reset
+// IconOrder -> Rotate GreyScale SepiaTool InvertTool Crop Blur ColorPop vintage Vignette Reset
 
 function ToolButton(props) {
     return (

@@ -105,6 +105,57 @@ export function invert(data) {
     wasm.invert(ptr0, len0, data);
 }
 
+/**
+ * @param {Uint8Array} data
+ * @param {number} image_width
+ * @param {number} blur_radius
+ */
+export function blur_image(data, image_width, blur_radius) {
+    var ptr0 = passArray8ToWasm0(data, wasm.__wbindgen_malloc);
+    var len0 = WASM_VECTOR_LEN;
+    wasm.blur_image(ptr0, len0, data, image_width, blur_radius);
+}
+
+/**
+ * @param {Uint8Array} data
+ * @param {number} image_width
+ * @param {number} sharpen_amount
+ */
+export function sharpen_image(data, image_width, sharpen_amount) {
+    var ptr0 = passArray8ToWasm0(data, wasm.__wbindgen_malloc);
+    var len0 = WASM_VECTOR_LEN;
+    wasm.sharpen_image(ptr0, len0, data, image_width, sharpen_amount);
+}
+
+/**
+ * @param {Uint8Array} data
+ * @param {number} width
+ * @param {number} height
+ */
+export function apply_vignette(data, width, height) {
+    var ptr0 = passArray8ToWasm0(data, wasm.__wbindgen_malloc);
+    var len0 = WASM_VECTOR_LEN;
+    wasm.apply_vignette(ptr0, len0, data, width, height);
+}
+
+/**
+ * @param {Uint8Array} data
+ */
+export function apply_color_pop(data) {
+    var ptr0 = passArray8ToWasm0(data, wasm.__wbindgen_malloc);
+    var len0 = WASM_VECTOR_LEN;
+    wasm.apply_color_pop(ptr0, len0, data);
+}
+
+/**
+ * @param {Uint8Array} data
+ */
+export function apply_vintage(data) {
+    var ptr0 = passArray8ToWasm0(data, wasm.__wbindgen_malloc);
+    var len0 = WASM_VECTOR_LEN;
+    wasm.apply_vintage(ptr0, len0, data);
+}
+
 async function __wbg_load(module, imports) {
     if (typeof Response === 'function' && module instanceof Response) {
         if (typeof WebAssembly.instantiateStreaming === 'function') {

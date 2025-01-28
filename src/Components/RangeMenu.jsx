@@ -1,10 +1,12 @@
 ﻿import Sliders from "./Sliders.jsx";
 import Headings from "./Heading.jsx";
+import RadioInput from "./RadioInput.jsx";
 import styled from 'styled-components';
 import PropTypes from "prop-types";
+import {useEffect , useState} from "react";
 
 function RangeMenu(props) {
-
+    const [RenderBlurMenu, setRenderBlurMenu] = useState(null);
     function handleBrightnessChange(e) {
         props.handleBrightnessChange(e);
     }
@@ -14,6 +16,12 @@ function RangeMenu(props) {
     function handleRGBChange(e) {
         props.handleRGBChange(e);
     }
+
+    useEffect(() => {
+        if (props.Blur) {
+            setRenderBlurMenu(<RadioInput ApplyBlur={props.ApplyBlur} setBlur={props.setBlur} />);
+        }else setRenderBlurMenu(null);
+    }, [props.Blur]);
 
     return(
         <div style={Style.wrapper}>
@@ -35,7 +43,7 @@ function RangeMenu(props) {
                     </div>
                 </div>
             </StyledWrapper>
-
+            {RenderBlurMenu}
         </div>
     )
 }
@@ -44,6 +52,9 @@ RangeMenu.propTypes = {
     handleBrightnessChange: PropTypes.func.isRequired,
     handleContrastChange: PropTypes.func.isRequired,
     handleRGBChange: PropTypes.func.isRequired,
+    ApplyBlur: PropTypes.func.isRequired,
+    Blur: PropTypes.bool.isRequired,
+    setBlur: PropTypes.func.isRequired,
 
     Brightness: PropTypes.number.isRequired,
     contrast: PropTypes.number.isRequired,
@@ -104,3 +115,4 @@ const StyledWrapper = styled.div`
     .card:hover {
         box-shadow: 0 0 30px 1px rgba(0, 255, 117, 0.30);
     }`;
+

@@ -1,7 +1,5 @@
 use wasm_bindgen::__rt::flat_byte_slices;
 use wasm_bindgen::prelude::*;
-use std::io::Cursor;
-use image::ImageReader;
 
 #[wasm_bindgen]
 extern "C" {
@@ -63,6 +61,7 @@ pub fn update_img(data: &mut [u8] , brightness:i8, contrast:i32 ,red:i8, green:i
     handle_contrast(data, contrast);
 }
 
+#[derive(Clone)]
 struct Pixel {
     r: u8,
     g: u8,
@@ -73,15 +72,12 @@ impl Pixel {
     fn new(r:u8, g:u8, b:u8, alpha:u8) -> Pixel {
         Pixel { r, g, b, alpha }
     }
-    fn clone (&self) -> Pixel {
+    fn Clone (&self) -> Pixel {
         Pixel::new(self.r, self.g, self.b, self.alpha)
     }
 }
-#[wasm_bindgen]
-pub fn rotate_right(data: &mut [u8], width: usize) {
-    let height = data.len() / (4 * width);
+fn get_pixels(data: &mut [u8]) -> Vec<Pixel> {
     let mut pixels: Vec<Pixel> = Vec::with_capacity(data.len() / 4);
-    // Step 1: Create a pixel array
     for chunk in data.chunks_exact(4) {
         let pixel = Pixel {
             r: chunk[0],
@@ -91,14 +87,28 @@ pub fn rotate_right(data: &mut [u8], width: usize) {
         };
         pixels.push(pixel);
     }
-    // Step 2: Create a temporary array for column-wise rotation
+    pixels
+}
+fn get_raw(pixels:&Vec<Pixel>) -> Vec<u8> {
+    let mut result:Vec<u8> = vec![];
+    for pixel in pixels.iter() {
+        result.push(pixel.r);
+        result.push(pixel.g);
+        result.push(pixel.b);
+        result.push(pixel.alpha);
+    }
+    result
+}
+#[wasm_bindgen]
+pub fn rotate_right(data: &mut [u8], width: usize) {
+    let height = data.len() / (4 * width);
+    let mut pixels = get_pixels(data);
     let mut temp: Vec<Pixel> = Vec::with_capacity(pixels.len());
     for col in 0..width {
         for row in (0..height).rev() {
-            temp.push(pixels[row * width + col].clone());
+            temp.push(pixels[row * width + col].Clone());
         }
     }
-    // Step 3: Flatten the temp array back into the original data
     for (i, pixel) in temp.iter().enumerate() {
         let base = i * 4;
         data[base] = pixel.r;
@@ -142,4 +152,176 @@ pub fn invert(data: &mut [u8]) {
 }
 
 #[wasm_bindgen]
-pub 
+pub fn blur_image(data: &mut [u8], image_width: usize, blur_radius: usize) {
+    let pixels = get_pixels(data);
+    let image_height = pixels.len() / image_width;
+    let mut pixel_grid = vec![vec![Pixel::new(0, 0, 0, 0); image_width]; image_height];
+    for (index, pixel) in pixels.into_iter().enumerate() {
+        let row = index / image_width;
+        let col = index % image_width;
+        pixel_grid[row][col] = pixel;
+    }
+    let mut blurred_pixels = vec![vec![Pixel::new(0, 0, 0, 0); image_width]; image_height];
+
+    for row in 0..image_height {
+        for col in 0..image_width {
+            let mut r_sum = 0u32;
+            let mut g_sum = 0u32;
+            let mut b_sum = 0u32;
+            let mut alpha_sum = 0u32;
+            let mut valid_neighbors = 0;
+            for d_row in -(blur_radius as isize)..=(blur_radius as isize) {
+                for d_col in -(blur_radius as isize)..=(blur_radius as isize) {
+                    let neighbor_row = row as isize + d_row;
+                    let neighbor_col = col as isize + d_col;
+                    if neighbor_row >= 0
+                        && (neighbor_row as usize) < image_height
+                        && neighbor_col >= 0
+                        && (neighbor_col as usize) < image_width
+                    {
+                        let neighbor = &pixel_grid[neighbor_row as usize][neighbor_col as usize];
+                        r_sum += neighbor.r as u32;
+                        g_sum += neighbor.g as u32;
+                        b_sum += neighbor.b as u32;
+                        alpha_sum += neighbor.alpha as u32;
+                        valid_neighbors += 1;
+                    }
+                }
+            }
+            blurred_pixels[row][col] = Pixel::new(
+                (r_sum / valid_neighbors) as u8,
+                (g_sum / valid_neighbors) as u8,
+                (b_sum / valid_neighbors) as u8,
+                (alpha_sum / valid_neighbors) as u8,
+            );
+        }
+    }
+
+    let mut flattened_pixels = Vec::with_capacity(data.len());
+    for row in 0..image_height {
+        for col in 0..image_width {
+            let pixel = &blurred_pixels[row][col];
+            flattened_pixels.extend_from_slice(&[pixel.r, pixel.g, pixel.b, pixel.alpha]);
+        }
+    }
+    data.copy_from_slice(&flattened_pixels);
+}
+#[wasm_bindgen]
+pub fn sharpen_image(data: &mut [u8], image_width: usize, sharpen_amount: f32) {
+    let pixels = get_pixels(data);
+    let image_height = pixels.len() / image_width;
+
+    let mut pixel_grid = vec![vec![Pixel::new(0, 0, 0, 0); image_width]; image_height];
+    for (index, pixel) in pixels.into_iter().enumerate() {
+        let row = index / image_width;
+        let col = index % image_width;
+        pixel_grid[row][col] = pixel;
+    }
+
+    let mut sharpened_pixels = vec![vec![Pixel::new(0, 0, 0, 0); image_width]; image_height];
+
+    for row in 0..image_height {
+        for col in 0..image_width {
+            let mut r_sum = 0i32;
+            let mut g_sum = 0i32;
+            let mut b_sum = 0i32;
+
+            for d_row in -1..=1 {
+                for d_col in -1..=1 {
+                    let neighbor_row = row as isize + d_row;
+                    let neighbor_col = col as isize + d_col;
+
+                    if neighbor_row >= 0
+                        && (neighbor_row as usize) < image_height
+                        && neighbor_col >= 0
+                        && (neighbor_col as usize) < image_width
+                    {
+                        let weight = match (d_row, d_col) {
+                            (0, 0) => 5,
+                            _ => -1,
+                        };
+                        let neighbor = &pixel_grid[neighbor_row as usize][neighbor_col as usize];
+                        r_sum += neighbor.r as i32 * weight;
+                        g_sum += neighbor.g as i32 * weight;
+                        b_sum += neighbor.b as i32 * weight;
+                    }
+                }
+            }
+
+            let clamp = |val: i32| val.clamp(0, 255) as u8;
+            sharpened_pixels[row][col] = Pixel::new(
+                clamp((r_sum as f32 * sharpen_amount) as i32),
+                clamp((g_sum as f32 * sharpen_amount) as i32),
+                clamp((b_sum as f32 * sharpen_amount) as i32),
+                pixel_grid[row][col].alpha,
+            );
+        }
+    }
+
+    let mut flattened_pixels = Vec::with_capacity(data.len());
+    for row in 0..image_height {
+        for col in 0..image_width {
+            let pixel = &sharpened_pixels[row][col];
+            flattened_pixels.extend_from_slice(&[pixel.r, pixel.g, pixel.b, pixel.alpha]);
+        }
+    }
+    data.copy_from_slice(&flattened_pixels);
+}
+
+fn vintage(pixels: &mut Vec<Pixel>) {
+    for pixel in pixels.iter_mut() {
+        let r = (pixel.r as f32 * 0.9) as u8;
+        let g = (pixel.g as f32 * 0.75) as u8;
+        let b = (pixel.b as f32 * 0.5) as u8;
+        pixel.r = r;
+        pixel.g = g;
+        pixel.b = b;
+    }
+}
+fn color_pop(pixels: &mut Vec<Pixel>) {
+    for pixel in pixels.iter_mut() {
+        let r = (pixel.r as f32 * 1.2).min(255.0) as u8;
+        let g = (pixel.g as f32 * 1.2).min(255.0) as u8;
+        let b = (pixel.b as f32 * 1.2).min(255.0) as u8;
+
+        pixel.r = r;
+        pixel.g = g;
+        pixel.b = b;
+    }
+}
+fn vignette(pixels: &mut Vec<Pixel>, width: usize, height: usize) {
+    let center_x = width as f32 / 2.0;
+    let center_y = height as f32 / 2.0;
+    let max_distance = ((center_x * center_x) + (center_y * center_y)).sqrt();
+
+    for (index, pixel) in pixels.iter_mut().enumerate() {
+        let x = (index % width) as f32;
+        let y = (index / width) as f32;
+        let distance = ((x - center_x).powi(2) + (y - center_y).powi(2)).sqrt();
+        let factor = (1.0 - (distance / max_distance)).max(0.2);
+        pixel.r = (pixel.r as f32 * factor) as u8;
+        pixel.g = (pixel.g as f32 * factor) as u8;
+        pixel.b = (pixel.b as f32 * factor) as u8;
+    }
+}
+
+#[wasm_bindgen]
+pub fn apply_vignette(data :&mut [u8], width: usize, height: usize) {
+    let mut pixels = get_pixels(data);
+    vignette(&mut pixels, width, height);
+    data.copy_from_slice(&*get_raw(&pixels));
+}
+
+#[wasm_bindgen]
+pub fn apply_color_pop(data:&mut [u8]) {
+    let mut pixels = get_pixels(data);
+    color_pop(&mut pixels);
+    data.copy_from_slice(&*get_raw(&pixels));
+}
+
+#[wasm_bindgen]
+pub fn apply_vintage(data:&mut [u8]) {
+    let mut pixels = get_pixels(data);
+    vintage(&mut pixels);
+    data.copy_from_slice(&*get_raw(&pixels));
+}

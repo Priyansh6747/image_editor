@@ -8,6 +8,11 @@ export function rotate_right(data: Uint8Array, width: number): void;
 export function greyscale(data: Uint8Array): void;
 export function sepia(data: Uint8Array): void;
 export function invert(data: Uint8Array): void;
+export function blur_image(data: Uint8Array, image_width: number, blur_radius: number): void;
+export function sharpen_image(data: Uint8Array, image_width: number, sharpen_amount: number): void;
+export function apply_vignette(data: Uint8Array, width: number, height: number): void;
+export function apply_color_pop(data: Uint8Array): void;
+export function apply_vintage(data: Uint8Array): void;
 
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
 
@@ -21,6 +26,11 @@ export interface InitOutput {
   readonly greyscale: (a: number, b: number, c: any) => void;
   readonly sepia: (a: number, b: number, c: any) => void;
   readonly invert: (a: number, b: number, c: any) => void;
+  readonly blur_image: (a: number, b: number, c: any, d: number, e: number) => void;
+  readonly sharpen_image: (a: number, b: number, c: any, d: number, e: number) => void;
+  readonly apply_vignette: (a: number, b: number, c: any, d: number, e: number) => void;
+  readonly apply_color_pop: (a: number, b: number, c: any) => void;
+  readonly apply_vintage: (a: number, b: number, c: any) => void;
   readonly __wbindgen_export_0: WebAssembly.Table;
   readonly __wbindgen_malloc: (a: number, b: number) => number;
   readonly __wbindgen_start: () => void;

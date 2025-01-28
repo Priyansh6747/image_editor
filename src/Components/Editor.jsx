@@ -2,7 +2,9 @@
 import {useEffect, useRef, useState} from "react";
 import RangeMenu from "./RangeMenu.jsx";
 import Toolbar from "./tools/Toolbar.jsx";
-import init ,{update_img , rotate_right , greyscale , sepia , invert} from "./../../wasm_pkg/RUST.js"
+import init ,{
+    update_img , rotate_right , greyscale , sepia , invert , blur_image , apply_color_pop , apply_vignette , apply_vintage
+} from "./../../wasm_pkg/RUST.js"
 import Download from "./Buttons/Download.jsx";
 import Crop from "./tools/CropUI.jsx"
 
@@ -21,6 +23,7 @@ function Editor(props) {
     const [Cheight, setHeight] = useState(props.IMG.height);
     const [Cwidth, setWidth] = useState(props.IMG.width);
     const [renderCrop, setRenderCrop] = useState(null);
+    const [Blur , setBlur ] = useState(false);
 
 
 
@@ -95,6 +98,8 @@ function Editor(props) {
             rotate_right(OrignalImgData.data, OrignalImgData.width);
             let newW = OrignalImgData.height;
             let newH = OrignalImgData.width;
+            setWidth(newW);
+            setHeight(newH);
             let newImageData = new ImageData(
                 new Uint8ClampedArray(OrignalImgData.data),
                 newW,
@@ -132,6 +137,35 @@ function Editor(props) {
             PutImage();
         });
     }
+    function ApplyBlur(strength){
+        init().then(() => {
+            blur_image(OrignalImgData.data , OrignalImgData.width , strength);
+            PutImage();
+        });
+    }
+    function initiateBlur(){
+        setBlur(!Blur);
+    }
+    function PopColors(){
+        init().then(() => {
+            apply_color_pop(OrignalImgData.data);
+            PutImage();
+        });
+    }
+
+    function Vintage(){
+        init().then(() => {
+            apply_vintage(OrignalImgData.data);
+            PutImage();
+        })
+    }
+
+    function Vignette() {
+        init().then(() => {
+            apply_vignette(OrignalImgData.data , OrignalImgData.width , OrignalImgData.height);
+            PutImage();
+        })
+    }
 
     function InitiateCrop(){
         if (renderCrop == null)
@@ -139,7 +173,9 @@ function Editor(props) {
         else setRenderCrop(null);
     }
     function ApplyCrop(cropArea){
+        cropArea.y += 48;
         console.log(cropArea);
+        console.log(OrignalImgData);
     }
 
     function PutImage(){
@@ -221,7 +257,10 @@ function Editor(props) {
 
     return (
         <div style={styles.container}>
-            <Toolbar rotateRight={rotateRight} greyScale={greyScale} Sepia={Sepia} invert={Invert} initiateCrop={InitiateCrop}  Reset={reset}/>
+            <Toolbar rotateRight={rotateRight} greyScale={greyScale} Sepia={Sepia} invert={Invert}
+                     initiateCrop={InitiateCrop} Blur={initiateBlur} PopColor = {PopColors} Vignette={Vignette} Vintage={Vintage}
+                     Reset={reset}
+            />
             <div style={styles.CanvasContainer}>
                 {renderCrop}
                <canvas ref={CanvasRef}/>
@@ -230,7 +269,8 @@ function Editor(props) {
             <RangeMenu handleBrightnessChange={handleBrightnessChange}
                        handleContrastChange={handleContrastChange}
                        handleRGBChange={handleRGBChange}
-                       Brightness={parseInt(Brightness)} contrast={parseInt(contrast)} RGB={RGB} Reset={resetCount}/>
+                       Brightness={parseInt(Brightness)} contrast={parseInt(contrast)} RGB={RGB}
+                       Blur={Blur} setBlur = {setBlur} ApplyBlur={ApplyBlur} Reset={resetCount}/>
             <div style={styles.Download}>
                 <Download HandleClick={handleDownload}/>
             </div>
