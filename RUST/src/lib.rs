@@ -1,6 +1,7 @@
 use wasm_bindgen::__rt::flat_byte_slices;
 use wasm_bindgen::prelude::*;
-
+use std::io::Cursor;
+use image::ImageReader;
 
 #[wasm_bindgen]
 extern "C" {
@@ -139,3 +140,6 @@ pub fn invert(data: &mut [u8]) {
         pixel[2] = 255 - pixel[2];
     }
 }
+
+#[wasm_bindgen]
+pub 

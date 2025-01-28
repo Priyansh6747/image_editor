@@ -4,6 +4,7 @@ import RangeMenu from "./RangeMenu.jsx";
 import Toolbar from "./tools/Toolbar.jsx";
 import init ,{update_img , rotate_right , greyscale , sepia , invert} from "./../../wasm_pkg/RUST.js"
 import Download from "./Buttons/Download.jsx";
+import Crop from "./tools/CropUI.jsx"
 
 window.addEventListener('beforeunload', function (e) {
     const message = "Are you sure you want to leave? Any unsaved changes will be lost.";
@@ -17,6 +18,9 @@ function Editor(props) {
     const imageRef = useRef(new Image());
     const CanvasRef = useRef(null);
     const [OrignalImgData, setOrignalImgData] = useState(null);
+    const [Cheight, setHeight] = useState(props.IMG.height);
+    const [Cwidth, setWidth] = useState(props.IMG.width);
+    const [renderCrop, setRenderCrop] = useState(null);
 
 
 
@@ -34,6 +38,8 @@ function Editor(props) {
             canvas.height = imgHeight * scaleFactor;
             context.drawImage(imageRef.current, 0, 0, canvas.width, canvas.height);
             if(!OrignalImgData) setOrignalImgData(context.getImageData(0, 0, canvas.width, canvas.height));
+            setHeight(canvas.height);
+            setWidth(canvas.width);
         }
     },[props.IMG])
 
@@ -127,6 +133,15 @@ function Editor(props) {
         });
     }
 
+    function InitiateCrop(){
+        if (renderCrop == null)
+            setRenderCrop(<Crop  height={parseInt(Cheight)} width={parseInt(Cwidth)} ApplyCrop={ApplyCrop}  />);
+        else setRenderCrop(null);
+    }
+    function ApplyCrop(cropArea){
+        console.log(cropArea);
+    }
+
     function PutImage(){
         let context = CanvasRef.current.getContext("2d");
         let newW = OrignalImgData.width;
@@ -176,13 +191,42 @@ function Editor(props) {
         };
     }
 
-
+    const styles = {
+        container: {
+            width: '100%',
+            height: 'window.height',
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+        },
+        CanvasContainer: {
+            width: `${Cwidth}px`,
+            maxWidth: '100%',
+            height: `${Cheight}px`,
+            maxHeight: `100%`,
+            overflow: 'hidden',
+            position: 'relative',
+            zIndex: 1,
+        },
+        Download:{
+            position: 'absolute',
+            top: 0,
+            right: 10,
+            padding: '2px',
+            overflow: 'hidden',
+        }
+    }
 
 
     return (
         <div style={styles.container}>
-            <Toolbar rotateRight={rotateRight} greyScale={greyScale} Sepia={Sepia} invert={Invert} Reset={reset}/>
-            <canvas ref={CanvasRef}/>
+            <Toolbar rotateRight={rotateRight} greyScale={greyScale} Sepia={Sepia} invert={Invert} initiateCrop={InitiateCrop}  Reset={reset}/>
+            <div style={styles.CanvasContainer}>
+                {renderCrop}
+               <canvas ref={CanvasRef}/>
+            </div>
+
             <RangeMenu handleBrightnessChange={handleBrightnessChange}
                        handleContrastChange={handleContrastChange}
                        handleRGBChange={handleRGBChange}
@@ -194,6 +238,8 @@ function Editor(props) {
         </div>
     )
 
+
+
 }
 
 export default Editor;
@@ -202,21 +248,3 @@ Editor.propTypes = {
     Name: PropTypes.string,
 }
 
-// Note the styling of DownloadBtn is in index.css
-const styles = {
-    container: {
-        width: '100%',
-        height: 'window.height',
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-    },
-    Download:{
-        position: 'absolute',
-        top: 0,
-        right: 10,
-        padding: '2px',
-        overflow: 'hidden',
-    }
-}
