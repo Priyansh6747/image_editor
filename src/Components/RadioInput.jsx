@@ -57,8 +57,8 @@ function RadioInput(props) {
             <h3>Adjust Blur Strength</h3>
             <Radio onChange={handleValue}></Radio>
             <div style={Style.Btn}>
-                <div style={Style.CancelBtn}><Cancel handleClick={handleCancel} /></div>
                 <Apply text="Apply"/>
+                <div style={Style.CancelBtn}><Cancel handleClick={handleCancel} /></div>
             </div>
         </form>
     )
@@ -76,14 +76,16 @@ const Style = {
         padding: "1rem",
         flexDirection: "column",
         justifyContent: "space-around",
-        alignItems: "center",
+        alignItems: "flex-start",
         marginTop: "1rem",
         borderRadius: "10px",
+        overflowX: "hidden",
     },
     Btn: {
         display: "flex",
         flexDirection: "row",
         justifyContent: "space-around",
+        gap: "1rem",
     },
     CancelBtn : {
         transform : "translate(-5% ,-10%)",
