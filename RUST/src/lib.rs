@@ -325,3 +325,49 @@ pub fn apply_vintage(data:&mut [u8]) {
     vintage(&mut pixels);
     data.copy_from_slice(&*get_raw(&pixels));
 }
+
+fn extract_subarray(
+    pixels: &mut Vec<Pixel>,
+    image_width: usize,
+    image_height: usize,
+    given_x: usize,
+    given_y: usize,
+    width: usize,
+    height: usize,
+) -> Vec<Pixel> {
+    let mut extracted_pixels = Vec::new();
+    let start_row = given_x;
+    let start_col = given_y;
+
+    for row in start_row..(start_row + height) {
+        for col in start_col..(start_col + width) {
+            if row < image_height && col < image_width {
+                let index = row * image_width + col;
+                if index >= pixels.len() {
+                    panic!(
+                        "Index {} out of bounds! Image size: {}",
+                        index, pixels.len()
+                    );
+                }
+                extracted_pixels.push(pixels[index].clone());
+            } else {
+                panic!(
+                    "Invalid coordinates: row={} col={} (image {}x{})",
+                    row, col, image_width, image_height
+                );
+            }
+        }
+    }
+    extracted_pixels
+}
+
+
+#[wasm_bindgen]
+pub fn apply_crop(data:&mut [u8], width:usize, height:usize , given_x:usize, given_y:usize , image_width:usize , image_height:usize) {
+    let mut pixels = get_pixels(data);
+    let extracted_pixels = extract_subarray(&mut pixels, image_width,image_height, given_x, given_y, width, height);
+    let raw_data = get_raw(&extracted_pixels);
+    if data.len() >= raw_data.len() {
+        data[..raw_data.len()].copy_from_slice(&raw_data);
+    }
+}

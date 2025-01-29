@@ -6,7 +6,25 @@ import PropTypes from "prop-types";
 import {useEffect , useState} from "react";
 
 function RangeMenu(props) {
-    const [RenderBlurMenu, setRenderBlurMenu] = useState(null);
+    const Menu = <StyledWrapper>
+        <div>
+            <div className="card">
+                <div className="card2">
+                    <div style={Style.container}>
+                        <Sliders value={parseInt(props.Brightness)} onValueChange={handleBrightnessChange}
+                                 name="Brightness" Reset={props.Reset}/>
+                        <Sliders value={parseInt(props.contrast)} onValueChange={handleContrastChange}
+                                 name="Contrast" Reset={props.Reset}/>
+                        <Sliders value={parseInt(props.RGB.red)} onValueChange={handleRGBChange} name='red' Reset={props.Reset}/>
+                        <Sliders value={parseInt(props.RGB.green)} onValueChange={handleRGBChange} name='green' Reset={props.Reset}/>
+                        <Sliders value={parseInt(props.RGB.blue)} onValueChange={handleRGBChange} name='blue' Reset={props.Reset}/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </StyledWrapper>
+
+    const [RenderBlurMenu, setRenderBlurMenu] = useState(Menu);
     function handleBrightnessChange(e) {
         props.handleBrightnessChange(e);
     }
@@ -17,32 +35,18 @@ function RangeMenu(props) {
         props.handleRGBChange(e);
     }
 
+
+
     useEffect(() => {
         if (props.Blur) {
             setRenderBlurMenu(<RadioInput ApplyBlur={props.ApplyBlur} setBlur={props.setBlur} />);
-        }else setRenderBlurMenu(null);
+        }else setRenderBlurMenu(Menu);
     }, [props.Blur]);
 
     return(
         <div style={Style.wrapper}>
             <Headings title='Menu' desc='Utilize this menu to fine-tune settings for optimal adjustments in your image.' />
-            <StyledWrapper>
-                <div>
-                    <div className="card">
-                        <div className="card2">
-                            <div style={Style.container}>
-                                <Sliders value={parseInt(props.Brightness)} onValueChange={handleBrightnessChange}
-                                         name="Brightness" Reset={props.Reset}/>
-                                <Sliders value={parseInt(props.contrast)} onValueChange={handleContrastChange}
-                                         name="Contrast" Reset={props.Reset}/>
-                                <Sliders value={parseInt(props.RGB.red)} onValueChange={handleRGBChange} name='red' Reset={props.Reset}/>
-                                <Sliders value={parseInt(props.RGB.green)} onValueChange={handleRGBChange} name='green' Reset={props.Reset}/>
-                                <Sliders value={parseInt(props.RGB.blue)} onValueChange={handleRGBChange} name='blue' Reset={props.Reset}/>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </StyledWrapper>
+
             {RenderBlurMenu}
         </div>
     )

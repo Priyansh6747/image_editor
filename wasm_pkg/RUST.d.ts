@@ -13,6 +13,7 @@ export function sharpen_image(data: Uint8Array, image_width: number, sharpen_amo
 export function apply_vignette(data: Uint8Array, width: number, height: number): void;
 export function apply_color_pop(data: Uint8Array): void;
 export function apply_vintage(data: Uint8Array): void;
+export function apply_crop(data: Uint8Array, width: number, height: number, given_x: number, given_y: number, image_width: number, image_height: number): void;
 
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
 
@@ -31,6 +32,7 @@ export interface InitOutput {
   readonly apply_vignette: (a: number, b: number, c: any, d: number, e: number) => void;
   readonly apply_color_pop: (a: number, b: number, c: any) => void;
   readonly apply_vintage: (a: number, b: number, c: any) => void;
+  readonly apply_crop: (a: number, b: number, c: any, d: number, e: number, f: number, g: number, h: number, i: number) => void;
   readonly __wbindgen_export_0: WebAssembly.Table;
   readonly __wbindgen_malloc: (a: number, b: number) => number;
   readonly __wbindgen_start: () => void;

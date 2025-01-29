@@ -7,8 +7,6 @@ function Toolbar(props){
         <div style={Style.container}>
             <ToolButton HandleClick = {props.rotateRight} Icon={0}
                         name="Rotate" detail="Rotate the image right by 90degs"/>
-            <ToolButton HandleClick = {props.initiateCrop} Icon={4}
-                        name="Crop" detail="Press again to cancel"/>
             <ToolButton HandleClick = {props.Blur} Icon={5}
             name="Blur" detail="Blurs the entire image"/>
             <ToolButton HandleClick = {props.PopColor} Icon={6}

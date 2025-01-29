@@ -156,6 +156,21 @@ export function apply_vintage(data) {
     wasm.apply_vintage(ptr0, len0, data);
 }
 
+/**
+ * @param {Uint8Array} data
+ * @param {number} width
+ * @param {number} height
+ * @param {number} given_x
+ * @param {number} given_y
+ * @param {number} image_width
+ * @param {number} image_height
+ */
+export function apply_crop(data, width, height, given_x, given_y, image_width, image_height) {
+    var ptr0 = passArray8ToWasm0(data, wasm.__wbindgen_malloc);
+    var len0 = WASM_VECTOR_LEN;
+    wasm.apply_crop(ptr0, len0, data, width, height, given_x, given_y, image_width, image_height);
+}
+
 async function __wbg_load(module, imports) {
     if (typeof Response === 'function' && module instanceof Response) {
         if (typeof WebAssembly.instantiateStreaming === 'function') {

@@ -3,7 +3,8 @@ import {useEffect, useRef, useState} from "react";
 import RangeMenu from "./RangeMenu.jsx";
 import Toolbar from "./tools/Toolbar.jsx";
 import init ,{
-    update_img , rotate_right , greyscale , sepia , invert , blur_image , apply_color_pop , apply_vignette , apply_vintage
+    update_img , rotate_right , greyscale , sepia , invert , blur_image ,
+    apply_color_pop , apply_vignette , apply_vintage ,apply_crop
 } from "./../../wasm_pkg/RUST.js"
 import Download from "./Buttons/Download.jsx";
 import Crop from "./tools/CropUI.jsx"
@@ -45,6 +46,7 @@ function Editor(props) {
             setWidth(canvas.width);
         }
     },[props.IMG])
+
 
     const [Brightness, setBrightness] = useState(0);
     function handleBrightnessChange(e) {
@@ -93,6 +95,8 @@ function Editor(props) {
     }
 
     function rotateRight() {
+        setRenderCrop(null);
+        setBlur(false)
         let context = CanvasRef.current.getContext("2d");
         init().then(() => {
             rotate_right(OrignalImgData.data, OrignalImgData.width);
@@ -145,6 +149,7 @@ function Editor(props) {
     }
     function initiateBlur(){
         setBlur(!Blur);
+        setRenderCrop(null);
     }
     function PopColors(){
         init().then(() => {
@@ -168,15 +173,36 @@ function Editor(props) {
     }
 
     function InitiateCrop(){
-        if (renderCrop == null)
-            setRenderCrop(<Crop  height={parseInt(Cheight)} width={parseInt(Cwidth)} ApplyCrop={ApplyCrop}  />);
+        if (renderCrop == null) {
+            setRenderCrop(<Crop height={parseInt(Cheight)} width={parseInt(Cwidth)} ApplyCrop={ApplyCrop}/>);
+            setBlur(false)
+        }
         else setRenderCrop(null);
     }
     function ApplyCrop(cropArea){
-        cropArea.y += 48;
-        console.log(cropArea);
-        console.log(OrignalImgData);
+        const adjustedCropArea = { ...cropArea, y: cropArea.y + 48 };
+        init().then(() => {
+            apply_crop(OrignalImgData.data, adjustedCropArea.width,
+                adjustedCropArea.height, adjustedCropArea.x, adjustedCropArea.y,
+                OrignalImgData.width, OrignalImgData.height);
+            setWidth(adjustedCropArea.width);
+            setHeight(adjustedCropArea.height);
+            CanvasRef.current.width = adjustedCropArea.width;
+            CanvasRef.current.height = adjustedCropArea.height;
+            let newImageData = new ImageData(
+                new Uint8ClampedArray(OrignalImgData.data),
+                adjustedCropArea.width,
+                adjustedCropArea.height
+            );
+            setOrignalImgData({
+                data: newImageData.data,
+                width: adjustedCropArea.width,
+                height: adjustedCropArea.height,
+            });
+            PutImage();
+        });
     }
+
 
     function PutImage(){
         let context = CanvasRef.current.getContext("2d");
@@ -202,6 +228,8 @@ function Editor(props) {
     }
 
     function reset() {
+        setBlur(false);
+        setRenderCrop(null);
         imageRef.current.src = URL.createObjectURL(new Blob([props.IMG]));
         imageRef.current.onload = () => {
             const canvas = CanvasRef.current;
@@ -244,6 +272,7 @@ function Editor(props) {
             overflow: 'hidden',
             position: 'relative',
             zIndex: 1,
+            paddingBottom: '1px',
         },
         Download:{
             position: 'absolute',

@@ -14,6 +14,7 @@ export const sharpen_image: (a: number, b: number, c: any, d: number, e: number)
 export const apply_vignette: (a: number, b: number, c: any, d: number, e: number) => void;
 export const apply_color_pop: (a: number, b: number, c: any) => void;
 export const apply_vintage: (a: number, b: number, c: any) => void;
+export const apply_crop: (a: number, b: number, c: any, d: number, e: number, f: number, g: number, h: number, i: number) => void;
 export const __wbindgen_export_0: WebAssembly.Table;
 export const __wbindgen_malloc: (a: number, b: number) => number;
 export const __wbindgen_start: () => void;

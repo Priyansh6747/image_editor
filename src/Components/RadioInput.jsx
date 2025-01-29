@@ -2,6 +2,7 @@
 import {useState} from "react";
 import PropTypes from "prop-types";
 import Apply from "./Buttons/ApplyBtn.jsx"
+import Cancel from "./Buttons/CancelBtn.jsx"
 
 const Radio = (props) => {
     return (
@@ -47,11 +48,18 @@ function RadioInput(props) {
         props.ApplyBlur(value);
         props.setBlur(false);
     }
+    function handleCancel(e) {
+        e.preventDefault();
+        props.setBlur(false);
+    }
     return (
         <form onSubmit={HandleSubmit} style={Style.wrapper}>
             <h3>Adjust Blur Strength</h3>
             <Radio onChange={handleValue}></Radio>
-            <Apply text="Apply"/>
+            <div style={Style.Btn}>
+                <div style={Style.CancelBtn}><Cancel handleClick={handleCancel} /></div>
+                <Apply text="Apply"/>
+            </div>
         </form>
     )
 }
@@ -71,6 +79,16 @@ const Style = {
         alignItems: "center",
         marginTop: "1rem",
         borderRadius: "10px",
+    },
+    Btn: {
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-around",
+    },
+    CancelBtn : {
+        transform : "translate(-5% ,-10%)",
+        paddingRight: "20%",
+        overflow: "hidden",
     }
 }
 
