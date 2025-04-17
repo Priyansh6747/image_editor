@@ -42,6 +42,6 @@ To get started with the project locally:
    ```
 3. Run the development server: 
    ```bash
-   npm start
+   npm run dev
    ``` 
    
