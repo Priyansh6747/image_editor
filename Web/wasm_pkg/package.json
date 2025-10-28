@@ -1,0 +1,18 @@
+{
+  "name": "RUST",
+  "type": "module",
+  "collaborators": [
+    "Priyansh6747 <154755072+Priyansh6747@users.noreply.github.com>"
+  ],
+  "version": "0.1.0",
+  "files": [
+    "RUST_bg.wasm",
+    "RUST.js",
+    "RUST.d.ts"
+  ],
+  "main": "RUST.js",
+  "types": "RUST.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}
